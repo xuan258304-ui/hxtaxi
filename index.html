@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>白牌車隊 - 專業估價系統</title>
+  <style>
+    body {
+      font-family: -apple-system, "Microsoft JhengHei", sans-serif;
+      background-color: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h2 {
+      color: #1a1a1a;
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
+      color: #555;
+    }
+
+    input {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #eee;
+      border-radius: 12px;
+      box-sizing: border-box;
+      font-size: 18px;
+      outline: none;
+      transition: border 0.3s;
+    }
+
+    input:focus {
+      border-color: #007bff;
+    }
+
+    .result-box {
+      background: #f8faff;
+      border: 1px solid #e1e8f0;
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .price-label {
+      font-size: 14px;
+      color: #777;
+      margin-bottom: 5px;
+    }
+
+    .price {
+      font-size: 36px;
+      color: #007bff;
+      font-weight: 900;
+    }
+
+    .btn-call {
+      display: block;
+      background: #00c853;
+      color: white;
+      text-align: center;
+      padding: 16px;
+      border-radius: 12px;
+      text-decoration: none;
+      margin-top: 25px;
+      font-weight: bold;
+      font-size: 18px;
+      box-shadow: 0 4px 12px rgba(0, 200, 83, 0.3);
+    }
+
+    .details {
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px dashed #ccc;
+    }
+
+    .detail-item {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 5px;
+      display: flex;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="card">
+    <h2>預估車資計算</h2>
+
+    <div class="input-group">
+      <label>請輸入導航里程 (km)</label>
+      <input type="number" id="distance" placeholder="輸入公里數，如：20" step="0.1" oninput="calc()">
+    </div>
+
+    <div class="result-box">
+      <div class="price-label">預估金額</div>
+      <div class="price" id="totalFare">$0</div>
+    </div>
+
+    <div class="details">
+      <div class="detail-item"><span>起跳價 (2.4km)</span> <span>$100</span></div>
+      <div class="detail-item"><span>里程跳檻</span> <span>仍以實際公里數為主</span></div>
+      <div class="detail-item"><span>長途加成</span> <span>仍以實際公里數為主</span></div>
+    </div>
+
+    <a href="https://line.me/ti/p/@650voopd" class="btn-call">立即預約叫車</a>
+  </div>
+
+  <script>
+    function calc() {
+      const dist = parseFloat(document.getElementById('distance').value);
+      if (isNaN(dist) || dist <= 0) {
+        document.getElementById('totalFare').innerText = "$0";
+        return;
+      }
+      let fare = 100; // 基礎起跳價
+      let base = 2.4;
+      // 1. 處理輪流跳檻邏輯
+      if (dist > base) {
+        let remaining = dist - base;
+        let step = 0;
+        while (remaining > 0) {
+          let stepLimit = (step % 2 === 0) ? 2 : 3;
+          remaining -= stepLimit;
+          fare += 50;
+          step++;
+        }
+      }
+      // 2. 處理長途加成：每 16 公里加 50
+      // Math.floor(dist / 16) 會計算總里程包含幾個完整的 16 公里
+      let longDistanceBonus = Math.floor(dist / 16) * 50;
+      fare += longDistanceBonus;
+      document.getElementById('totalFare').innerText = "$" + fare;
+    }
+  </script>
+
+</body>
+
+</html>
